@@ -1,0 +1,117 @@
+@font-face {
+    font-family: 'YoonChildfundkoreaManSeh';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2408@1.0/YoonChildfundkoreaManSeh.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    background-color: #eb8352;
+    padding: 0;
+    margin: 0;
+}
+
+.head-container {
+    width: 100%;
+    text-align: center;
+    margin-top: 100px;
+    border-bottom: 3px solid #1f4270;
+}
+
+.head-container h1 {
+    font-size: 30px;
+    font-weight: 100;
+    color: #dddf4d;
+    font-family: "YoonChildfundkoreaManSeh", serif
+}
+
+.head-container p {
+    font-size: 60px;
+    font-weight: bold;
+    margin-top: 0;
+    color: #dddf4d;
+    font-family: "YoonChildfundkoreaManSeh", serif
+}
+
+.menu-container-wrapper {
+    margin-bottom: 100px;
+}
+
+.menu-container-header {
+    padding: 20px 0 20px 0;
+    font-size: 30px;
+    color: #ccd6de;
+    background-color: #1f4270;
+    margin-top: 10px;
+    margin-bottom: 80px;
+    text-align: center;
+}
+
+.menu-card-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 100px;
+    margin-bottom: 80px;
+}
+
+.menu-card {
+    width: 300px;
+}
+
+.img-wrapper {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.menu-img {
+    width: 100%;
+    border: 7px solid #656623;
+    border-radius: 3px;
+}
+
+.menu-name {
+    font-size: 25px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #1f4270;
+    font-family: "YoonChildfundkoreaManSeh", serif
+}
+
+.menu-detail {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #1f4270;
+    font-family: "YoonChildfundkoreaManSeh", serif
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+footer {
+    background-color: #1f4270;
+    width: 100%;
+    height: 300px;
+}
