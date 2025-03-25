@@ -14,48 +14,31 @@ body {
 .head-container {
     width: 100%;
     text-align: center;
-    margin-top: 100px;
     border-bottom: 3px solid #1f4270;
 }
 
 .head-container h1 {
-    font-size: 30px;
     font-weight: 100;
     color: #dddf4d;
     font-family: "YoonChildfundkoreaManSeh", serif;
 }
 
 .head-container p {
-    font-size: 60px;
     font-weight: bold;
     margin-top: 0;
     color: #dddf4d;
     font-family: "YoonChildfundkoreaManSeh", serif;
 }
 
-.menu-container-wrapper {
-    margin-bottom: 100px;
-}
-
 .menu-container-header {
-    padding: 20px 0 20px 0;
-    font-size: 30px;
     color: #ccd6de;
     background-color: #1f4270;
-    margin-top: 10px;
-    margin-bottom: 80px;
     text-align: center;
 }
 
 .menu-card-wrapper {
     display: flex;
     justify-content: center;
-    gap: 100px;
-    margin-bottom: 80px;
-}
-
-.menu-card {
-    width: 300px;
 }
 
 .img-wrapper {
@@ -81,17 +64,13 @@ body {
 }
 
 .menu-name {
-    font-size: 25px;
     font-weight: bold;
-    margin-bottom: 10px;
     color: #1f4270;
     font-family: "YoonChildfundkoreaManSeh", serif;
 }
 
 .menu-detail {
-    font-size: 18px;
     font-weight: bold;
-    margin-bottom: 10px;
     color: #1f4270;
     font-family: "YoonChildfundkoreaManSeh", serif;
 }
@@ -101,6 +80,164 @@ footer {
     font-family: "YoonChildfundkoreaManSeh", serif;
     background-color: #1f4270;
     width: 100%;
-    height: 300px;
-    padding: 30px;
+}
+
+@media (min-width: 1025px) {
+    .head-container {
+        margin-top: 100px;
+    }
+    
+    .head-container h1 {
+        font-size: 30px;
+    }
+    
+    .head-container p {
+        font-size: 60px;
+    }
+    
+    .menu-container-wrapper {
+        margin-bottom: 100px;
+    }
+    
+    .menu-container-header {
+        padding: 20px 0 20px 0;
+        font-size: 30px;
+        margin-top: 10px;
+        margin-bottom: 80px;
+    }
+    
+    .menu-card-wrapper {
+        gap: 100px;
+        margin-bottom: 80px;
+    }
+    
+    .menu-card {
+        width: 300px;
+    }
+    
+    .menu-name {
+        font-size: 25px;
+        margin-bottom: 10px;
+    }
+    
+    .menu-detail {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+    
+    footer {
+        width: 100%;
+        height: 300px;
+        padding: 30px;
+    }
+
+    .wrapper {
+        width: 90%;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .head-container {
+        margin-top: 70px;
+    }
+    
+    .head-container h1 {
+        font-size: 30px;
+    }
+    
+    .head-container p {
+        font-size: 60px;
+    }
+    
+    .menu-container-wrapper {
+        margin-bottom: 70px;
+    }
+    
+    .menu-container-header {
+        padding: 15px 0 15px 0;
+        font-size: 25px;
+        margin-top: 7px;
+        margin-bottom: 65px;
+    }
+    
+    .menu-card-wrapper {
+        gap: 100px;
+        margin-bottom: 80px;
+    }
+    
+    .menu-card {
+        width: 300px;
+    }
+    
+    .menu-name {
+        font-size: 25px;
+        margin-bottom: 10px;
+    }
+    
+    .menu-detail {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+    
+    footer {
+        height: 300px;
+        padding: 30px;
+    }
+
+    .wrapper {
+        width: 90%;
+    }
+}
+
+@media (max-width: 768px) {    
+    .head-container {
+        margin-top: 50px;
+    }
+    
+    .head-container h1 {
+        font-size: 30px;
+    }
+    
+    .head-container p {
+        font-size: 60px;
+    }
+    
+    .menu-container-wrapper {
+        margin-bottom: 50px;
+    }
+    
+    .menu-container-header {
+        padding: 13px 0 13px 0;
+        font-size: 16px;
+        margin-top: 5px;
+        margin-bottom: 50px;
+    }
+    
+    .menu-card-wrapper {
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+    
+    .menu-card {
+        width: 150px;
+    }
+    
+    .menu-name {
+        font-size: 17px;
+        margin-bottom: 6px;
+    }
+    
+    .menu-detail {
+        font-size: 13px;
+        margin-bottom: 7px;
+    }
+    
+    footer {
+        height: 300px;
+        padding: 30px;
+    }
+
+    .wrapper {
+        width: 90%;
+    }
 }
