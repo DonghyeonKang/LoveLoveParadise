@@ -235,6 +235,7 @@ footer {
     footer {
         height: 300px;
         padding: 30px;
+        width: calc(100% - 60px);
     }
 
     .wrapper {
