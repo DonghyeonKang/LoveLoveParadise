@@ -6,7 +6,9 @@ services:
     volumes:
       - .:/usr/local/apache2/htdocs/
     environment:
-      - VIRTUAL_HOST=loveloveparadise.kro.kr  # 도메인 연결을 위한 환경 변수 설정
+      - VIRTUAL_HOST=loveloveparadise.deepdeepgo.com  # 도메인 연결을 위한 환경 변수 설정
+      - LETSENCRYPT_HOST=loveloveparadise.deepdeepgo.com
+      - LETSENCRYPT_EMAIL=donghyeon009@gmail.com
     networks:
       - reverse-proxy_proxy  # nginx-proxy 네트워크와 연결
 
