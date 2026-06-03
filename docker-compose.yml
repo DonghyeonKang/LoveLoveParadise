@@ -1,17 +1,55 @@
 version: '3.8'
 
 services:
-  loveloveparadise:
-    build: .
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"
     volumes:
-      - .:/usr/local/apache2/htdocs/
+      - ./frontend:/usr/local/apache2/htdocs/
     environment:
-      - VIRTUAL_HOST=loveloveparadise.deepdeepgo.com  # 도메인 연결을 위한 환경 변수 설정
+      - VIRTUAL_HOST=loveloveparadise.deepdeepgo.com
       - LETSENCRYPT_HOST=loveloveparadise.deepdeepgo.com
       - LETSENCRYPT_EMAIL=donghyeon009@gmail.com
     networks:
-      - reverse-proxy_proxy  # nginx-proxy 네트워크와 연결
+      - reverse-proxy_proxy
+
+  backend:
+    build: ./backend
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${POSTGRES_DB}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - reverse-proxy_proxy
+      - internal
+
+  db:
+    image: postgres:17-alpine
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - internal
+
+volumes:
+  postgres_data:
 
 networks:
   reverse-proxy_proxy:
     external: true
+  internal:
+    driver: bridge

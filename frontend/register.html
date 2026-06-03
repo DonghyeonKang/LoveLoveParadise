@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>회원가입 | Love Love Paradise</title>
+  <link rel="stylesheet" href="index.css">
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/나루토마키.png">
+</head>
+<body>
+  <nav class="site-nav">
+    <a class="site-nav__brand" href="index.html">러브 러브 파라다이스</a>
+    <div class="site-nav__links">
+      <a href="login.html" class="site-nav__link">로그인</a>
+      <a href="register.html" class="site-nav__link site-nav__link--active">회원가입</a>
+    </div>
+  </nav>
+
+  <main class="auth-page">
+    <section class="auth-card auth-card--wide">
+      <header class="auth-card__header">
+        <p class="auth-card__eyebrow">새로운 손님 환영</p>
+        <h1>회원가입</h1>
+        <p class="auth-card__desc">우리 가족 메뉴판을 함께 만들어 보세요.</p>
+      </header>
+
+      <form id="register-form" class="auth-form" novalidate>
+        <label class="form-field">
+          <span>이름</span>
+          <input type="text" name="name" autocomplete="name" required placeholder="표시 이름">
+        </label>
+
+        <label class="form-field">
+          <span>이메일</span>
+          <input type="email" name="email" autocomplete="email" required placeholder="you@example.com">
+        </label>
+
+        <label class="form-field">
+          <span>비밀번호</span>
+          <input type="password" name="password" autocomplete="new-password" required minlength="8" placeholder="8자 이상">
+        </label>
+
+        <label class="form-field">
+          <span>비밀번호 확인</span>
+          <input type="password" name="passwordConfirm" autocomplete="new-password" required minlength="8" placeholder="비밀번호 다시 입력">
+        </label>
+
+        <fieldset class="family-choice">
+          <legend>가족 설정</legend>
+
+          <label class="choice-card">
+            <input type="radio" name="familyMode" value="new" checked>
+            <span class="choice-card__content">
+              <strong>새 가족 만들기</strong>
+              <small>처음 오셨다면 새 가족을 만들어 주세요.</small>
+            </span>
+          </label>
+
+          <label class="choice-card">
+            <input type="radio" name="familyMode" value="join">
+            <span class="choice-card__content">
+              <strong>기존 가족 합류</strong>
+              <small>가족 ID를 입력해 함께 메뉴판을 사용해요.</small>
+            </span>
+          </label>
+        </fieldset>
+
+        <div id="family-id-section" class="family-id-section" hidden>
+          <label class="form-field">
+            <span>가족 ID</span>
+            <div class="input-with-button">
+              <input type="text" name="familyId" placeholder="가족 ID를 입력하세요">
+              <button type="button" id="verify-family-btn" class="btn btn--secondary">확인</button>
+            </div>
+          </label>
+          <p id="family-verify-message" class="form-message" hidden></p>
+        </div>
+
+        <p id="register-message" class="form-message" hidden></p>
+
+        <button type="submit" class="btn btn--primary">회원가입</button>
+      </form>
+
+      <p class="auth-card__footer">
+        이미 계정이 있나요?
+        <a href="login.html">로그인하기</a>
+      </p>
+    </section>
+  </main>
+
+  <script type="module">
+    import { register, checkFamily, showMessage } from './api.js';
+
+    const form = document.getElementById('register-form');
+    const messageEl = document.getElementById('register-message');
+    const familySection = document.getElementById('family-id-section');
+    const familyVerifyMessage = document.getElementById('family-verify-message');
+    const verifyFamilyBtn = document.getElementById('verify-family-btn');
+    const submitBtn = form.querySelector('button[type="submit"]');
+
+    let familyVerified = false;
+    let verifiedFamilyId = '';
+
+    function isJoinMode() {
+      return form.familyMode.value === 'join';
+    }
+
+    function resetFamilyVerification() {
+      familyVerified = false;
+      verifiedFamilyId = '';
+      showMessage(familyVerifyMessage, '', '');
+    }
+
+    form.querySelectorAll('input[name="familyMode"]').forEach((radio) => {
+      radio.addEventListener('change', () => {
+        const joinMode = isJoinMode();
+        familySection.hidden = !joinMode;
+        resetFamilyVerification();
+      });
+    });
+
+    verifyFamilyBtn.addEventListener('click', async () => {
+      const familyId = form.familyId.value.trim();
+      resetFamilyVerification();
+
+      if (!familyId) {
+        showMessage(familyVerifyMessage, '가족 ID를 입력해 주세요.', 'error');
+        return;
+      }
+
+      verifyFamilyBtn.disabled = true;
+      verifyFamilyBtn.textContent = '확인 중...';
+
+      try {
+        const { response } = await checkFamily(familyId);
+
+        if (response.ok) {
+          familyVerified = true;
+          verifiedFamilyId = familyId;
+          showMessage(familyVerifyMessage, '가족을 찾았어요! 이 ID로 합류할 수 있습니다.', 'success');
+          return;
+        }
+
+        if (response.status === 404) {
+          showMessage(familyVerifyMessage, '존재하지 않는 가족 ID입니다.', 'error');
+          return;
+        }
+
+        showMessage(familyVerifyMessage, '가족 확인에 실패했습니다.', 'error');
+      } catch {
+        showMessage(familyVerifyMessage, '서버에 연결할 수 없습니다.', 'error');
+      } finally {
+        verifyFamilyBtn.disabled = false;
+        verifyFamilyBtn.textContent = '확인';
+      }
+    });
+
+    form.familyId.addEventListener('input', resetFamilyVerification);
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      showMessage(messageEl, '', '');
+
+      const formData = new FormData(form);
+      const name = formData.get('name').trim();
+      const email = formData.get('email').trim();
+      const password = formData.get('password');
+      const passwordConfirm = formData.get('passwordConfirm');
+      const joinMode = isJoinMode();
+
+      if (!name || !email || !password) {
+        showMessage(messageEl, '모든 필수 항목을 입력해 주세요.', 'error');
+        return;
+      }
+
+      if (password.length < 8) {
+        showMessage(messageEl, '비밀번호는 8자 이상이어야 합니다.', 'error');
+        return;
+      }
+
+      if (password !== passwordConfirm) {
+        showMessage(messageEl, '비밀번호가 일치하지 않습니다.', 'error');
+        return;
+      }
+
+      if (joinMode && !familyVerified) {
+        showMessage(messageEl, '기존 가족 합류 시 가족 ID 확인을 먼저 해 주세요.', 'error');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = '가입 중...';
+
+      try {
+        const payload = {
+          email,
+          password,
+          name,
+          familyId: joinMode ? verifiedFamilyId : null,
+        };
+
+        const { response, body } = await register(payload);
+
+        if (response.status === 201) {
+          showMessage(
+            messageEl,
+            `회원가입 완료! 가족 ID: ${body.familyId}`,
+            'success',
+          );
+          setTimeout(() => {
+            window.location.href = 'login.html';
+          }, 1200);
+          return;
+        }
+
+        if (response.status === 409) {
+          showMessage(messageEl, '이미 사용 중인 이메일입니다.', 'error');
+          return;
+        }
+
+        if (response.status === 404) {
+          showMessage(messageEl, '존재하지 않는 가족 ID입니다. 다시 확인해 주세요.', 'error');
+          resetFamilyVerification();
+          return;
+        }
+
+        showMessage(messageEl, '회원가입에 실패했습니다. 잠시 후 다시 시도해 주세요.', 'error');
+      } catch {
+        showMessage(messageEl, '서버에 연결할 수 없습니다. 네트워크를 확인해 주세요.', 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '회원가입';
+      }
+    });
+  </script>
+</body>
+</html>

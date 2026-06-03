@@ -9,6 +9,243 @@ body {
     background-color: #eb8352;
     padding: 0;
     margin: 0;
+    font-family: "YoonChildfundkoreaManSeh", serif;
+}
+
+.site-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 24px;
+    background-color: #1f4270;
+    border-bottom: 3px solid #656623;
+}
+
+.site-nav__brand {
+    color: #dddf4d;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.site-nav__links {
+    display: flex;
+    gap: 12px;
+}
+
+.site-nav__link {
+    color: #ccd6de;
+    text-decoration: none;
+    padding: 8px 14px;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    transition: color 0.2s, border-color 0.2s, background-color 0.2s;
+}
+
+.site-nav__link:hover,
+.site-nav__link--active {
+    color: #1f4270;
+    background-color: #dddf4d;
+    border-color: #656623;
+}
+
+.auth-page {
+    min-height: calc(100vh - 70px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px 80px;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 420px;
+    background-color: #fff7eb;
+    border: 4px solid #1f4270;
+    border-radius: 8px;
+    padding: 32px 28px;
+    box-shadow: 8px 8px 0 #656623;
+}
+
+.auth-card--wide {
+    max-width: 520px;
+}
+
+.auth-card__header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.auth-card__eyebrow {
+    margin: 0 0 8px;
+    color: #656623;
+    font-size: 14px;
+}
+
+.auth-card__header h1 {
+    margin: 0 0 10px;
+    color: #1f4270;
+    font-weight: 100;
+    font-size: 36px;
+}
+
+.auth-card__desc {
+    margin: 0;
+    color: #1f4270;
+    font-size: 16px;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-field span {
+    color: #1f4270;
+    font-size: 15px;
+}
+
+.form-field input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    border: 2px solid #1f4270;
+    border-radius: 4px;
+    background-color: #ffffff;
+    color: #1f4270;
+    font-family: inherit;
+    font-size: 15px;
+}
+
+.form-field input:focus {
+    outline: none;
+    border-color: #656623;
+    box-shadow: 0 0 0 3px rgba(221, 223, 77, 0.45);
+}
+
+.family-choice {
+    border: 2px solid #1f4270;
+    border-radius: 6px;
+    padding: 16px;
+    margin: 0;
+}
+
+.family-choice legend {
+    color: #1f4270;
+    padding: 0 8px;
+}
+
+.choice-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    margin-top: 10px;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.choice-card:has(input:checked) {
+    background-color: rgba(221, 223, 77, 0.35);
+    border-color: #656623;
+}
+
+.choice-card__content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    color: #1f4270;
+}
+
+.choice-card__content strong {
+    font-size: 16px;
+}
+
+.choice-card__content small {
+    font-size: 13px;
+    opacity: 0.85;
+}
+
+.family-id-section {
+    padding: 4px 0 0;
+}
+
+.input-with-button {
+    display: flex;
+    gap: 10px;
+}
+
+.input-with-button input {
+    flex: 1;
+}
+
+.btn {
+    border: 2px solid #1f4270;
+    border-radius: 4px;
+    padding: 12px 18px;
+    font-family: inherit;
+    font-size: 15px;
+    cursor: pointer;
+    transition: transform 0.15s, opacity 0.15s;
+}
+
+.btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.btn--primary {
+    background-color: #dddf4d;
+    color: #1f4270;
+}
+
+.btn--secondary {
+    background-color: #ccd6de;
+    color: #1f4270;
+    white-space: nowrap;
+}
+
+.form-message {
+    margin: 0;
+    padding: 10px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-message.success {
+    background-color: rgba(221, 223, 77, 0.45);
+    color: #1f4270;
+    border: 1px solid #656623;
+}
+
+.form-message.error {
+    background-color: rgba(235, 131, 82, 0.25);
+    color: #7a2e12;
+    border: 1px solid #c45a2c;
+}
+
+.auth-card__footer {
+    margin: 24px 0 0;
+    text-align: center;
+    color: #1f4270;
+    font-size: 14px;
+}
+
+.auth-card__footer a {
+    color: #1f4270;
+    font-weight: bold;
 }
 
 .head-container {
@@ -191,6 +428,28 @@ footer {
 }
 
 @media (max-width: 768px) {    
+    .site-nav {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 14px 16px;
+    }
+
+    .site-nav__links {
+        justify-content: center;
+    }
+
+    .auth-card {
+        padding: 24px 18px;
+    }
+
+    .auth-card__header h1 {
+        font-size: 28px;
+    }
+
+    .input-with-button {
+        flex-direction: column;
+    }
+
     .head-container {
         margin-top: 50px;
     }

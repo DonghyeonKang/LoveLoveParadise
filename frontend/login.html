@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>로그인 | Love Love Paradise</title>
+  <link rel="stylesheet" href="index.css">
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/나루토마키.png">
+</head>
+<body>
+  <nav class="site-nav">
+    <a class="site-nav__brand" href="index.html">러브 러브 파라다이스</a>
+    <div class="site-nav__links">
+      <a href="login.html" class="site-nav__link site-nav__link--active">로그인</a>
+      <a href="register.html" class="site-nav__link">회원가입</a>
+    </div>
+  </nav>
+
+  <main class="auth-page">
+    <section class="auth-card">
+      <header class="auth-card__header">
+        <p class="auth-card__eyebrow">다시 오신 걸 환영해요</p>
+        <h1>로그인</h1>
+        <p class="auth-card__desc">이메일과 비밀번호로 입장해 주세요.</p>
+      </header>
+
+      <form id="login-form" class="auth-form" novalidate>
+        <label class="form-field">
+          <span>이메일</span>
+          <input type="email" name="email" autocomplete="email" required placeholder="you@example.com">
+        </label>
+
+        <label class="form-field">
+          <span>비밀번호</span>
+          <input type="password" name="password" autocomplete="current-password" required placeholder="비밀번호">
+        </label>
+
+        <p id="login-message" class="form-message" hidden></p>
+
+        <button type="submit" class="btn btn--primary">로그인</button>
+      </form>
+
+      <p class="auth-card__footer">
+        아직 계정이 없나요?
+        <a href="register.html">회원가입하기</a>
+      </p>
+    </section>
+  </main>
+
+  <script type="module">
+    import { login, showMessage } from './api.js';
+
+    const form = document.getElementById('login-form');
+    const messageEl = document.getElementById('login-message');
+    const submitBtn = form.querySelector('button[type="submit"]');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      showMessage(messageEl, '', '');
+
+      const formData = new FormData(form);
+      const email = formData.get('email').trim();
+      const password = formData.get('password');
+
+      if (!email || !password) {
+        showMessage(messageEl, '이메일과 비밀번호를 입력해 주세요.', 'error');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = '로그인 중...';
+
+      try {
+        const { response } = await login(email, password);
+
+        if (response.ok) {
+          showMessage(messageEl, '로그인 성공! 메뉴판으로 이동합니다.', 'success');
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 600);
+          return;
+        }
+
+        if (response.status === 401) {
+          showMessage(messageEl, '이메일 또는 비밀번호가 올바르지 않습니다.', 'error');
+          return;
+        }
+
+        showMessage(messageEl, '로그인에 실패했습니다. 잠시 후 다시 시도해 주세요.', 'error');
+      } catch {
+        showMessage(messageEl, '서버에 연결할 수 없습니다. 네트워크를 확인해 주세요.', 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '로그인';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+package com.deepdeepgo.loveloveparadise.useCases.registerUser.application.port.out
+
+interface LoadFamilyPort {
+  fun load(familyId: String): String
+}
