@@ -10,10 +10,7 @@
 <body>
   <nav class="site-nav">
     <a class="site-nav__brand" href="index.html">러브 러브 파라다이스</a>
-    <div class="site-nav__links">
-      <a href="login.html" class="site-nav__link">로그인</a>
-      <a href="register.html" class="site-nav__link site-nav__link--active">회원가입</a>
-    </div>
+    <div class="site-nav__links" id="site-nav-links"></div>
   </nav>
 
   <main class="auth-page">
@@ -89,7 +86,10 @@
   </main>
 
   <script type="module">
+    import { initNav } from './auth.js';
     import { register, checkFamily, showMessage } from './api.js';
+
+    initNav({ activePage: 'register' });
 
     const form = document.getElementById('register-form');
     const messageEl = document.getElementById('register-message');

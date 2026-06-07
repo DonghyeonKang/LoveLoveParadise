@@ -49,6 +49,54 @@ body {
     border-color: #656623;
 }
 
+.site-nav__user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #dddf4d;
+}
+
+.user-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #dddf4d;
+    border: 2px solid #656623;
+}
+
+.user-icon__svg {
+    width: 20px;
+    height: 20px;
+    fill: #1f4270;
+}
+
+.user-icon__name {
+    font-size: 15px;
+    color: #dddf4d;
+}
+
+.site-nav__logout-btn {
+    margin-left: 4px;
+    padding: 6px 12px;
+    border: 2px solid #656623;
+    border-radius: 4px;
+    background-color: transparent;
+    color: #ccd6de;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: color 0.2s, background-color 0.2s, border-color 0.2s;
+}
+
+.site-nav__logout-btn:hover {
+    color: #1f4270;
+    background-color: #dddf4d;
+    border-color: #656623;
+}
+
 .auth-page {
     min-height: calc(100vh - 70px);
     display: flex;
@@ -319,11 +367,7 @@ footer {
     width: 100%;
 }
 
-@media (min-width: 1025px) {
-    .head-container {
-        margin-top: 100px;
-    }
-    
+@media (min-width: 1025px) {    
     .head-container h1 {
         font-size: 30px;
     }
@@ -374,10 +418,6 @@ footer {
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
-    .head-container {
-        margin-top: 70px;
-    }
-    
     .head-container h1 {
         font-size: 30px;
     }
@@ -450,10 +490,6 @@ footer {
         flex-direction: column;
     }
 
-    .head-container {
-        margin-top: 50px;
-    }
-    
     .head-container h1 {
         font-size: 30px;
     }

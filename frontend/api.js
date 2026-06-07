@@ -39,6 +39,16 @@ export async function checkFamily(familyId) {
   });
 }
 
+export async function fetchSession() {
+  const { response, body } = await apiRequest('/api/v1/auth/me', { method: 'GET' });
+  if (response.ok) return body;
+  return null;
+}
+
+export async function logout() {
+  return apiRequest('/api/v1/auth/logout', { method: 'POST' });
+}
+
 export function showMessage(element, text, type) {
   element.textContent = text;
   element.className = `form-message ${type}`;
