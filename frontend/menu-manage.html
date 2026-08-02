@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>메뉴 관리 | Love Love Paradise</title>
   <link rel="stylesheet" href="index.css">
-  <link rel="icon" type="image/png" sizes="16x16" href="./assets/나루토마키.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/%EB%82%98%EB%A3%A8%ED%86%A0%EB%A7%88%ED%82%A4.png">
 </head>
 <body>
   <nav class="site-nav">
-    <a class="site-nav__brand" href="index.html">러브 러브 파라다이스</a>
+    <a class="site-nav__brand" href="/">러브 러브 파라다이스</a>
     <div class="site-nav__links" id="site-nav-links"></div>
   </nav>
 
@@ -131,12 +131,12 @@
 
         const thumb = document.createElement('div');
         thumb.className = 'menu-list-item__thumb';
-        if (item.photoId) {
-          const img = document.createElement('img');
-          img.src = `/api/v1/photos/${encodeURIComponent(item.photoId)}/thumb.jpg`;
-          img.alt = item.name;
-          thumb.appendChild(img);
-        }
+        const img = document.createElement('img');
+        img.src = item.photoId
+          ? `/api/v1/photos/${encodeURIComponent(item.photoId)}/thumb.jpg`
+          : './assets/%EB%82%98%EB%A3%A8%ED%86%A0%EB%A7%88%ED%82%A4.png';
+        img.alt = item.name;
+        thumb.appendChild(img);
 
         const info = document.createElement('div');
         info.className = 'menu-list-item__info';
@@ -171,7 +171,7 @@
       const { response, body } = await fetchMyMenuBoard();
       if (!response.ok) return;
 
-      shareLinkInput.value = `${window.location.origin}/menu-board.html?slug=${body.shareSlug}`;
+      shareLinkInput.value = `${window.location.origin}/menu-board?slug=${body.shareSlug}`;
       renderList(body.items);
     }
 

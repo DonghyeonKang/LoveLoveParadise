@@ -5,13 +5,13 @@ function createMenuCard(item) {
   const imgWrapper = document.createElement('div');
   imgWrapper.className = 'img-wrapper';
 
-  if (item.photoId) {
-    const img = document.createElement('img');
-    img.className = 'menu-img';
-    img.src = `/api/v1/photos/${encodeURIComponent(item.photoId)}/thumb.jpg`;
-    img.alt = item.name;
-    imgWrapper.appendChild(img);
-  }
+  const img = document.createElement('img');
+  img.className = 'menu-img';
+  img.src = item.photoId
+    ? `/api/v1/photos/${encodeURIComponent(item.photoId)}/thumb.jpg`
+    : './assets/%EB%82%98%EB%A3%A8%ED%86%A0%EB%A7%88%ED%82%A4.png';
+  img.alt = item.name;
+  imgWrapper.appendChild(img);
 
   const name = document.createElement('div');
   name.className = 'menu-name';

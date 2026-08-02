@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>가족 관리 | Love Love Paradise</title>
+  <link rel="stylesheet" href="index.css">
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/%EB%82%98%EB%A3%A8%ED%86%A0%EB%A7%88%ED%82%A4.png">
+</head>
+<body>
+  <nav class="site-nav">
+    <a class="site-nav__brand" href="/">러브 러브 파라다이스</a>
+    <div class="site-nav__links" id="site-nav-links"></div>
+  </nav>
+
+  <main class="menu-manage-page">
+    <section class="auth-card auth-card--wide">
+      <header class="auth-card__header">
+        <p class="auth-card__eyebrow">우리 가족</p>
+        <h1>가족 관리</h1>
+      </header>
+
+      <dl class="account-info">
+        <div class="account-info__row">
+          <dt>가족 ID</dt>
+          <dd id="family-id"></dd>
+        </div>
+      </dl>
+    </section>
+
+    <div id="family-member-list" class="menu-list"></div>
+  </main>
+
+  <script type="module">
+    import { initNav } from './auth.js';
+    import { fetchFamilyMembers } from './api.js';
+
+    const session = await initNav({ requireAuth: true, activePage: 'family-manage' });
+    if (!session) {
+      throw new Error('redirecting to login');
+    }
+
+    const { response, body } = await fetchFamilyMembers();
+    if (response.ok) {
+      document.getElementById('family-id').textContent = body.familyId;
+
+      const listEl = document.getElementById('family-member-list');
+      body.members.forEach((member) => {
+        const row = document.createElement('div');
+        row.className = 'menu-list-item';
+
+        const info = document.createElement('div');
+        info.className = 'menu-list-item__info';
+        const name = document.createElement('strong');
+        name.textContent = member.name;
+        const email = document.createElement('p');
+        email.textContent = member.email;
+        info.append(name, email);
+
+        row.append(info);
+        listEl.appendChild(row);
+      });
+    }
+  </script>
+</body>
+</html>

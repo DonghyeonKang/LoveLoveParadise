@@ -1,4 +1,4 @@
-import { fetchSession, logout } from './api.js';
+import { fetchSession, logout, fetchMyMenuBoard } from './api.js';
 
 const USER_ICON_SVG = `
   <svg class="user-icon__svg" viewBox="0 0 24 24" aria-hidden="true">
@@ -8,8 +8,8 @@ const USER_ICON_SVG = `
 
 function renderGuestNav(links, activePage) {
   links.innerHTML = `
-    <a href="login.html" class="site-nav__link${activePage === 'login' ? ' site-nav__link--active' : ''}">로그인</a>
-    <a href="register.html" class="site-nav__link${activePage === 'register' ? ' site-nav__link--active' : ''}">회원가입</a>
+    <a href="/login" class="site-nav__link${activePage === 'login' ? ' site-nav__link--active' : ''}">로그인</a>
+    <a href="/register" class="site-nav__link${activePage === 'register' ? ' site-nav__link--active' : ''}">회원가입</a>
   `;
 }
 
@@ -18,7 +18,13 @@ function renderUserNav(links, session) {
 
   const user = document.createElement('div');
   user.className = 'site-nav__user';
-  user.title = session.name;
+
+  const trigger = document.createElement('button');
+  trigger.type = 'button';
+  trigger.className = 'user-menu-trigger';
+  trigger.title = session.name;
+  trigger.setAttribute('aria-haspopup', 'true');
+  trigger.setAttribute('aria-expanded', 'false');
 
   const icon = document.createElement('span');
   icon.className = 'user-icon';
@@ -29,14 +35,88 @@ function renderUserNav(links, session) {
   name.className = 'user-icon__name';
   name.textContent = session.name;
 
+  trigger.append(icon, name);
+
+  const dropdown = document.createElement('div');
+  dropdown.className = 'user-menu-dropdown';
+  dropdown.hidden = true;
+
+  const closeDropdown = () => {
+    dropdown.hidden = true;
+    trigger.setAttribute('aria-expanded', 'false');
+  };
+
+  const shareBtn = document.createElement('button');
+  shareBtn.type = 'button';
+  shareBtn.className = 'user-menu-dropdown__item';
+  shareBtn.textContent = '공유하기';
+  shareBtn.addEventListener('click', () => {
+    handleShare(shareBtn, closeDropdown);
+  });
+
+  const familyLink = document.createElement('a');
+  familyLink.href = '/family-manage';
+  familyLink.className = 'user-menu-dropdown__item';
+  familyLink.textContent = '가족관리';
+
+  const menuLink = document.createElement('a');
+  menuLink.href = '/menu-manage';
+  menuLink.className = 'user-menu-dropdown__item';
+  menuLink.textContent = '메뉴관리';
+
+  const accountLink = document.createElement('a');
+  accountLink.href = '/account';
+  accountLink.className = 'user-menu-dropdown__item';
+  accountLink.textContent = '계정';
+
   const logoutBtn = document.createElement('button');
   logoutBtn.type = 'button';
-  logoutBtn.className = 'site-nav__logout-btn';
+  logoutBtn.className = 'user-menu-dropdown__item user-menu-dropdown__item--danger';
   logoutBtn.textContent = '로그아웃';
   logoutBtn.addEventListener('click', handleLogout);
 
-  user.append(icon, name, logoutBtn);
+  dropdown.append(shareBtn, familyLink, menuLink, accountLink, logoutBtn);
+
+  trigger.addEventListener('click', (event) => {
+    event.stopPropagation();
+    if (dropdown.hidden) {
+      dropdown.hidden = false;
+      trigger.setAttribute('aria-expanded', 'true');
+    } else {
+      closeDropdown();
+    }
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!user.contains(event.target)) {
+      closeDropdown();
+    }
+  });
+
+  user.append(trigger, dropdown);
   links.append(user);
+}
+
+async function handleShare(triggerBtn, onDone) {
+  const originalText = triggerBtn.textContent;
+
+  try {
+    const { response, body } = await fetchMyMenuBoard();
+    if (!response.ok) {
+      throw new Error('failed to load share link');
+    }
+
+    const shareUrl = `${window.location.origin}/menu-board?slug=${body.shareSlug}`;
+    await navigator.clipboard.writeText(shareUrl);
+    triggerBtn.textContent = '복사됨!';
+  } catch {
+    triggerBtn.textContent = '복사 실패';
+  } finally {
+    setTimeout(() => {
+      triggerBtn.textContent = originalText;
+      onDone();
+    }, 1500);
+  }
 }
 
 async function handleLogout() {
@@ -45,7 +125,7 @@ async function handleLogout() {
   } catch {
     // 쿠키 삭제는 서버 응답 기준이지만, 네트워크 오류 시에도 로그인 페이지로 이동
   }
-  window.location.href = 'login.html';
+  window.location.href = '/login';
 }
 
 export function renderNav(session, activePage = null) {
@@ -59,7 +139,7 @@ export function renderNav(session, activePage = null) {
   }
 }
 
-export async function initNav({ requireAuth = false, redirectTo = 'login.html', activePage = null } = {}) {
+export async function initNav({ requireAuth = false, redirectTo = '/login', activePage = null } = {}) {
   const session = await fetchSession();
 
   if (requireAuth && !session) {
@@ -68,7 +148,7 @@ export async function initNav({ requireAuth = false, redirectTo = 'login.html', 
   }
 
   if (!requireAuth && session && (activePage === 'login' || activePage === 'register')) {
-    window.location.href = 'index.html';
+    window.location.href = '/';
     return session;
   }
 

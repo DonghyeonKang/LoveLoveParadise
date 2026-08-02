@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>계정 | Love Love Paradise</title>
+  <link rel="stylesheet" href="index.css">
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/%EB%82%98%EB%A3%A8%ED%86%A0%EB%A7%88%ED%82%A4.png">
+</head>
+<body>
+  <nav class="site-nav">
+    <a class="site-nav__brand" href="/">러브 러브 파라다이스</a>
+    <div class="site-nav__links" id="site-nav-links"></div>
+  </nav>
+
+  <main class="auth-page">
+    <section class="auth-card">
+      <header class="auth-card__header">
+        <p class="auth-card__eyebrow">내 정보</p>
+        <h1>계정</h1>
+      </header>
+
+      <dl class="account-info">
+        <div class="account-info__row">
+          <dt>이름</dt>
+          <dd id="account-name"></dd>
+        </div>
+        <div class="account-info__row">
+          <dt>이메일</dt>
+          <dd id="account-email"></dd>
+        </div>
+      </dl>
+    </section>
+  </main>
+
+  <script type="module">
+    import { initNav } from './auth.js';
+
+    const session = await initNav({ requireAuth: true, activePage: 'account' });
+    if (!session) {
+      throw new Error('redirecting to login');
+    }
+
+    document.getElementById('account-name').textContent = session.name;
+    document.getElementById('account-email').textContent = session.email;
+  </script>
+</body>
+</html>

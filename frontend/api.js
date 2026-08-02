@@ -89,6 +89,10 @@ export async function fetchPublicMenuBoard(shareSlug) {
   });
 }
 
+export async function fetchFamilyMembers() {
+  return apiRequest('/api/v1/families/me', { method: 'GET' });
+}
+
 export function showMessage(element, text, type) {
   element.textContent = text;
   element.className = `form-message ${type}`;
