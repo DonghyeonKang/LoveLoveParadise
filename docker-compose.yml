@@ -3,6 +3,7 @@ version: '3.8'
 services:
   frontend:
     build: ./frontend
+    restart: always
     ports:
       - "8080:80"
     volumes:
@@ -16,6 +17,7 @@ services:
 
   backend:
     build: ./backend
+    restart: always
     volumes:
       - ./backend/uploads:/app/uploads
     environment:
@@ -33,6 +35,7 @@ services:
 
   db:
     image: postgres:17-alpine
+    restart: always
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
