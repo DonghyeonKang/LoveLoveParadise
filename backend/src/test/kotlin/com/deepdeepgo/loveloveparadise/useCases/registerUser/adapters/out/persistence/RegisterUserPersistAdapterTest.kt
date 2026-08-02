@@ -28,14 +28,16 @@ class RegisterUserPersistAdapterTest : DataJpaTestBase() {
 
     // Then
     assertThat(familyId).isNotBlank()
-    assertThat(familyRepository.findById(familyId)).isPresent
+    val saved = familyRepository.findById(familyId)
+    assertThat(saved).isPresent
+    assertThat(saved.get().shareSlug).isNotBlank()
   }
 
   @Test
   @DisplayName("Scenario: 성공 - 존재하는 familyId 조회 시 해당 id를 반환한다")
   fun load_family_success() {
     // Given
-    val savedId = familyRepository.save(FamilyEntity("test-family-id")).id
+    val savedId = familyRepository.save(FamilyEntity("test-family-id", "test-share-slug")).id
 
     // When
     val result = adapter.load(savedId)
@@ -55,7 +57,7 @@ class RegisterUserPersistAdapterTest : DataJpaTestBase() {
   @DisplayName("Scenario: 성공 - 사용자를 저장하고 userId를 반환한다")
   fun save_user_returns_id() {
     // Given
-    val familyId = familyRepository.save(FamilyEntity("family-for-user")).id
+    val familyId = familyRepository.save(FamilyEntity("family-for-user", "family-for-user-slug")).id
     val newUser = NewUser("user@test.com", "hashed_password", "홍길동", familyId)
 
     // When
@@ -76,7 +78,7 @@ class RegisterUserPersistAdapterTest : DataJpaTestBase() {
   @DisplayName("Scenario: 성공 - 이메일 존재 시 existsByEmail이 true를 반환한다")
   fun exists_by_email_returns_true() {
     // Given
-    val familyId = familyRepository.save(FamilyEntity("family-email-test")).id
+    val familyId = familyRepository.save(FamilyEntity("family-email-test", "family-email-test-slug")).id
     adapter.save(NewUser("exist@test.com", "hashed", "테스트", familyId))
 
     // When & Then

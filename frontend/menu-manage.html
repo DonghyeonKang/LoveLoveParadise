@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>메뉴 관리 | Love Love Paradise</title>
+  <link rel="stylesheet" href="index.css">
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/나루토마키.png">
+</head>
+<body>
+  <nav class="site-nav">
+    <a class="site-nav__brand" href="index.html">러브 러브 파라다이스</a>
+    <div class="site-nav__links" id="site-nav-links"></div>
+  </nav>
+
+  <main class="menu-manage-page">
+    <section class="auth-card auth-card--wide">
+      <header class="auth-card__header">
+        <p class="auth-card__eyebrow">우리 가족 메뉴판</p>
+        <h1>메뉴 관리</h1>
+        <p class="auth-card__desc">메뉴를 추가하고 공유 링크로 손님들에게 알려주세요.</p>
+      </header>
+
+      <div class="share-link-box">
+        <input type="text" id="share-link-input" readonly aria-label="공유 링크">
+        <button type="button" id="share-link-copy" class="btn btn--secondary">복사</button>
+      </div>
+
+      <form id="menu-form" class="auth-form" novalidate>
+        <input type="hidden" id="menu-form-id" value="">
+        <input type="hidden" id="menu-form-existing-photo-id" value="">
+
+        <label class="form-field">
+          <span>메뉴 이름</span>
+          <input type="text" name="name" required placeholder="예: 김치찌개">
+        </label>
+
+        <label class="form-field">
+          <span>설명</span>
+          <input type="text" name="description" required placeholder="짧은 소개">
+        </label>
+
+        <label class="form-field">
+          <span>사진 (선택, JPEG/PNG)</span>
+          <input type="file" name="photo" accept="image/jpeg,image/png">
+        </label>
+
+        <p id="menu-form-message" class="form-message" hidden></p>
+
+        <div class="input-with-button">
+          <button type="submit" class="btn btn--primary" id="menu-form-submit">메뉴 추가</button>
+          <button type="button" class="btn btn--secondary" id="menu-form-cancel" hidden>취소</button>
+        </div>
+      </form>
+    </section>
+
+    <div id="menu-list" class="menu-list"></div>
+  </main>
+
+  <script type="module">
+    import { initNav } from './auth.js';
+    import {
+      fetchMyMenuBoard,
+      uploadMenuPhoto,
+      createMenu,
+      updateMenu,
+      deleteMenu,
+      showMessage,
+    } from './api.js';
+
+    const session = await initNav({ requireAuth: true, activePage: 'menu-manage' });
+    if (!session) {
+      throw new Error('redirecting to login');
+    }
+
+    const form = document.getElementById('menu-form');
+    const formIdField = document.getElementById('menu-form-id');
+    const existingPhotoField = document.getElementById('menu-form-existing-photo-id');
+    const messageEl = document.getElementById('menu-form-message');
+    const submitBtn = document.getElementById('menu-form-submit');
+    const cancelBtn = document.getElementById('menu-form-cancel');
+    const listEl = document.getElementById('menu-list');
+    const shareLinkInput = document.getElementById('share-link-input');
+    const copyBtn = document.getElementById('share-link-copy');
+
+    function resetForm() {
+      form.reset();
+      formIdField.value = '';
+      existingPhotoField.value = '';
+      submitBtn.textContent = '메뉴 추가';
+      cancelBtn.hidden = true;
+      showMessage(messageEl, '', '');
+    }
+
+    function startEdit(item) {
+      formIdField.value = item.id;
+      existingPhotoField.value = item.photoId ?? '';
+      form.name.value = item.name;
+      form.description.value = item.description;
+      submitBtn.textContent = '메뉴 수정';
+      cancelBtn.hidden = false;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    cancelBtn.addEventListener('click', resetForm);
+
+    async function handleDelete(menuId) {
+      if (!window.confirm('이 메뉴를 삭제할까요?')) return;
+
+      const { response } = await deleteMenu(menuId);
+      if (response.ok) {
+        if (formIdField.value === menuId) resetForm();
+        await loadBoard();
+      }
+    }
+
+    function renderList(items) {
+      listEl.innerHTML = '';
+
+      if (items.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'menu-board-empty';
+        empty.textContent = '아직 등록된 메뉴가 없어요.';
+        listEl.appendChild(empty);
+        return;
+      }
+
+      items.forEach((item) => {
+        const row = document.createElement('div');
+        row.className = 'menu-list-item';
+
+        const thumb = document.createElement('div');
+        thumb.className = 'menu-list-item__thumb';
+        if (item.photoId) {
+          const img = document.createElement('img');
+          img.src = `/api/v1/photos/${encodeURIComponent(item.photoId)}/thumb.jpg`;
+          img.alt = item.name;
+          thumb.appendChild(img);
+        }
+
+        const info = document.createElement('div');
+        info.className = 'menu-list-item__info';
+        const name = document.createElement('strong');
+        name.textContent = item.name;
+        const desc = document.createElement('p');
+        desc.textContent = item.description;
+        info.append(name, desc);
+
+        const actions = document.createElement('div');
+        actions.className = 'menu-list-item__actions';
+
+        const editBtn = document.createElement('button');
+        editBtn.type = 'button';
+        editBtn.className = 'btn btn--secondary';
+        editBtn.textContent = '수정';
+        editBtn.addEventListener('click', () => startEdit(item));
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.type = 'button';
+        deleteBtn.className = 'btn btn--danger';
+        deleteBtn.textContent = '삭제';
+        deleteBtn.addEventListener('click', () => handleDelete(item.id));
+
+        actions.append(editBtn, deleteBtn);
+        row.append(thumb, info, actions);
+        listEl.appendChild(row);
+      });
+    }
+
+    async function loadBoard() {
+      const { response, body } = await fetchMyMenuBoard();
+      if (!response.ok) return;
+
+      shareLinkInput.value = `${window.location.origin}/menu-board.html?slug=${body.shareSlug}`;
+      renderList(body.items);
+    }
+
+    copyBtn.addEventListener('click', async () => {
+      await navigator.clipboard.writeText(shareLinkInput.value);
+      copyBtn.textContent = '복사됨!';
+      setTimeout(() => {
+        copyBtn.textContent = '복사';
+      }, 1500);
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      showMessage(messageEl, '', '');
+
+      const formData = new FormData(form);
+      const name = formData.get('name').trim();
+      const description = formData.get('description').trim();
+      const photoFile = formData.get('photo');
+      const menuId = formIdField.value;
+
+      if (!name || !description) {
+        showMessage(messageEl, '메뉴 이름과 설명을 입력해 주세요.', 'error');
+        return;
+      }
+
+      submitBtn.disabled = true;
+
+      try {
+        let photoId = existingPhotoField.value || null;
+
+        if (photoFile && photoFile.size > 0) {
+          const uploadResult = await uploadMenuPhoto(photoFile);
+          if (!uploadResult.response.ok) {
+            showMessage(
+              messageEl,
+              '사진 업로드에 실패했습니다. JPEG 또는 PNG 파일인지 확인해 주세요.',
+              'error',
+            );
+            return;
+          }
+          photoId = uploadResult.body.photoId;
+        }
+
+        const { response } = menuId
+          ? await updateMenu(menuId, { name, description, photoId })
+          : await createMenu({ name, description, photoId });
+
+        if (!response.ok) {
+          showMessage(messageEl, '저장에 실패했습니다. 잠시 후 다시 시도해 주세요.', 'error');
+          return;
+        }
+
+        resetForm();
+        await loadBoard();
+      } catch {
+        showMessage(messageEl, '서버에 연결할 수 없습니다. 네트워크를 확인해 주세요.', 'error');
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+
+    await loadBoard();
+  </script>
+</body>
+</html>

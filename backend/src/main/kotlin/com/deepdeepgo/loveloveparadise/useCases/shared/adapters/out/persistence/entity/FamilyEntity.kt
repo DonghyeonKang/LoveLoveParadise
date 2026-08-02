@@ -11,4 +11,5 @@ import org.hibernate.annotations.SQLRestriction
 @SQLRestriction("deleted_at IS NULL")
 class FamilyEntity(
   @Id @Column(nullable = false, updatable = false) val id: String,
+  @Column(nullable = false, unique = true) val shareSlug: String,
 ) : AuditEntity()

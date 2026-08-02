@@ -21,7 +21,7 @@ class CheckFamilyPersistAdapterTest : DataJpaTestBase() {
   @DisplayName("Scenario: 성공 - 존재하는 familyId로 verify 시 예외 없이 완료된다")
   fun verify_success() {
     // Given
-    familyRepository.save(FamilyEntity("existing-family-id"))
+    familyRepository.save(FamilyEntity("existing-family-id", "existing-family-slug"))
 
     // When & Then
     assertThatCode { adapter.verify("existing-family-id") }.doesNotThrowAnyException()

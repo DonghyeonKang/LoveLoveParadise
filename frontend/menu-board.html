@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메뉴판 | Love Love Paradise</title>
+    <link rel="stylesheet" href="index.css" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/나루토마키.png">
+</head>
+<body>
+    <nav class="site-nav">
+        <a class="site-nav__brand" href="index.html">러브 러브 파라다이스</a>
+        <div class="site-nav__links" id="site-nav-links"></div>
+    </nav>
+
+    <header class="head-container">
+        <h1>러브 러브 파라다이스</h1>
+        <p>메뉴판</p>
+    </header>
+
+    <div class="line"></div>
+
+    <div class="menu-container-wrapper" id="menu-board">
+        <p id="menu-board-empty" class="menu-board-empty" hidden></p>
+    </div>
+
+<footer>
+    <div class="wrapper">
+        <h1>러브 러브 파라다이스 시즌 1</h1>
+        <p>기간: 2024/5/16 ~ 2026/5/15</p>
+        <p>예약 문의: 모든 주문은 예약을 받고 있으며, 최소 2주 전에 예약을 해주시길 부탁드립니다. </p>
+    </div>
+</footer>
+<script type="module">
+  import { initNav } from './auth.js';
+  import { fetchPublicMenuBoard } from './api.js';
+  import { renderMenuGrid } from './menu-board-render.js';
+
+  initNav();
+
+  const board = document.getElementById('menu-board');
+  const emptyMessage = document.getElementById('menu-board-empty');
+  const shareSlug = new URLSearchParams(window.location.search).get('slug');
+
+  if (!shareSlug) {
+    emptyMessage.textContent = '공유 링크가 올바르지 않습니다.';
+    emptyMessage.hidden = false;
+  } else {
+    const { response, body } = await fetchPublicMenuBoard(shareSlug);
+    if (response.ok && body.items.length > 0) {
+      renderMenuGrid(board, body.items);
+    } else if (response.ok) {
+      emptyMessage.textContent = '아직 등록된 메뉴가 없어요.';
+      emptyMessage.hidden = false;
+    } else if (response.status === 404) {
+      emptyMessage.textContent = '존재하지 않는 메뉴판입니다.';
+      emptyMessage.hidden = false;
+    } else {
+      emptyMessage.textContent = '메뉴판을 불러오지 못했습니다.';
+      emptyMessage.hidden = false;
+    }
+  }
+</script>
+</body>
+</html>

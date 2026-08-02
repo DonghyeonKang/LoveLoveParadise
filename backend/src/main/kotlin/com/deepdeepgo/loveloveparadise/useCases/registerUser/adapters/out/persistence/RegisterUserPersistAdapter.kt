@@ -27,7 +27,7 @@ class RegisterUserPersistAdapter(
   }
 
   override fun save(): String {
-    val family = FamilyEntity(UUID.randomUUID().toString())
+    val family = FamilyEntity(UUID.randomUUID().toString(), UUID.randomUUID().toString())
     return familyRepository.save(family).id
   }
 
